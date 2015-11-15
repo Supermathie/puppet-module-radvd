@@ -187,8 +187,8 @@ define radvd::interface(
 	}
 
 	if $adv_default_lifetime != undef {
-		if $adv_default_lifetime !~ /^\d+(\.\d+)?$/ {
-			fail("Invalid value for adv_default_lifetime (got ${adv_default_lifetime}, expected decimal number)")
+		if $adv_default_lifetime !~ /^\d+$/ {
+			fail("Invalid value for adv_default_lifetime (got ${adv_default_lifetime}, expected integer)")
 		}
 
 		bitfile::bit { "/etc/radvd.conf:interface=${name}/adv_default_lifetime":
@@ -253,8 +253,8 @@ define radvd::interface(
 	}
 
 	if $home_agent_lifetime != undef {
-		if $home_agent_lifetime !~ /^\d+(\.\d+)?$/ {
-			fail("Invalid value for home_agent_lifetime (got ${home_agent_lifetime}, expected decimal number)")
+		if $home_agent_lifetime !~ /^\d+$/ {
+			fail("Invalid value for home_agent_lifetime (got ${home_agent_lifetime}, expected integer)")
 		}
 
 		bitfile::bit { "/etc/radvd.conf:interface=${name}/home_agent_lifetime":
