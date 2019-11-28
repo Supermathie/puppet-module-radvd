@@ -1,8 +1,8 @@
 define radvd::rdnss(
-	$interface,
-	$ip_list,
-	$adv_rdnss_lifetime = undef,
-	$flush_rdnss        = undef,
+	String                                    $interface,
+	Array                                     $ip_list,
+	Variant[Integer, Enum['infinity'], Undef] $adv_rdnss_lifetime = undef,
+	Variant[Boolean, Undef]                   $flush_rdnss        = undef,
 ) {
 	$ips = join($ip_list, " ")
 
@@ -14,10 +14,6 @@ define radvd::rdnss(
 	}
 
 	if $adv_rdnss_lifetime != undef {
-		if $adv_rdnss_lifetime !~ /^(\d+|infinity)$/ {
-			fail("Invalid value for adv_rdnss_lifetime (got ${adv_rdnss_lifetime}, expected integer or 'infinity')")
-		}
-
 		bitfile::bit { "/etc/radvd.conf:interface=${interface}:rdnss=${ips}/adv_rdnss_lifetime":
 			path    => "/etc/radvd.conf",
 			parent  => "/etc/radvd.conf:interface=${interface}:rdnss=${ips}",
@@ -29,7 +25,6 @@ define radvd::rdnss(
 		$flush_rdnss_value = $flush_rdnss ? {
 			true    => 'on',
 			false   => 'off',
-			default => fail("Invalid value for flush_rdnss (got ${flush_rdnss}, expected true/false)")
 		}
 
 		bitfile::bit { "/etc/radvd.conf:interface=${interface}:rdnss=${ips}/flush_rdnss":

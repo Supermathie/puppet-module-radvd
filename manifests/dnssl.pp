@@ -1,8 +1,8 @@
 define radvd::dnssl(
-	$interface,
-	$suffix_list,
-	$adv_dnssl_lifetime = undef,
-	$flush_dnssl        = undef,
+	String                                    $interface,
+	Array                                     $suffix_list,
+	Variant[Integer, Enum['infinity'], Undef] $adv_dnssl_lifetime = undef,
+	Variant[Boolean, Undef]                   $flush_dnssl        = undef,
 ) {
 	$suffixes = join($suffix_list, " ")
 
@@ -14,10 +14,6 @@ define radvd::dnssl(
 	}
 
 	if $adv_dnssl_lifetime != undef {
-		if $adv_dnssl_lifetime !~ /^(\d+|infinity)$/ {
-			fail("Invalid value for adv_dnssl_lifetime (got ${adv_dnssl_lifetime}, expected integer or 'infinity')")
-		}
-
 		bitfile::bit { "/etc/radvd.conf:interface=${interface}:dnssl=${suffixes}/adv_dnssl_lifetime":
 			path    => "/etc/radvd.conf",
 			parent  => "/etc/radvd.conf:interface=${interface}:dnssl=${suffixes}",
@@ -29,7 +25,6 @@ define radvd::dnssl(
 		$flush_dnssl_value = $flush_dnssl ? {
 			true    => 'on',
 			false   => 'off',
-			default => fail("Invalid value for flush_dnssl (got ${flush_dnssl}, expected true/false)")
 		}
 
 		bitfile::bit { "/etc/radvd.conf:interface=${interface}:dnssl=${suffixes}/flush_dnssl":

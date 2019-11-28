@@ -1,15 +1,15 @@
 define radvd::prefix(
-	$interface,
-	$prefix,
-	$adv_on_link            = undef,
-	$adv_autonomous         = undef,
-	$adv_router_addr        = undef,
-	$adv_valid_lifetime     = undef,
-	$adv_preferred_lifetime = undef,
-	$deprecate_prefix       = undef,
-	$decrement_lifetimes    = undef,
-	$base6_interface        = undef,
-	$base6to4_interface     = undef,
+	String                                    $interface,
+	String                                    $prefix,
+	Variant[Boolean, Undef]                   $adv_on_link            = undef,
+	Variant[Boolean, Undef]                   $adv_autonomous         = undef,
+	Variant[Boolean, Undef]                   $adv_router_addr        = undef,
+	Variant[Integer, Enum['infinity'], Undef] $adv_valid_lifetime     = undef,
+	Variant[Integer, Enum['infinity'], Undef] $adv_preferred_lifetime = undef,
+	Variant[Boolean, Undef]                   $deprecate_prefix       = undef,
+	Variant[Boolean, Undef]                   $decrement_lifetimes    = undef,
+	Variant[String,  Undef]                   $base6_interface        = undef,
+	Variant[String,  Undef]                   $base6to4_interface     = undef,
 ) {
 	bitfile::bit { "/etc/radvd.conf:interface=${interface}:prefix=${prefix}":
 		path            => "/etc/radvd.conf",
@@ -22,7 +22,6 @@ define radvd::prefix(
 		$adv_on_link_value = $adv_on_link ? {
 			true    => 'on',
 			false   => 'off',
-			default => fail("Invalid value for adv_on_link (got ${adv_on_link}, expected true/false)")
 		}
 
 		bitfile::bit { "/etc/radvd.conf:interface=${interface}:prefix=${prefix}/adv_on_link":
@@ -36,7 +35,6 @@ define radvd::prefix(
 		$adv_autonomous_value = $adv_autonomous ? {
 			true    => 'on',
 			false   => 'off',
-			default => fail("Invalid value for adv_autonomous (got ${adv_autonomous}, expected true/false)")
 		}
 
 		bitfile::bit { "/etc/radvd.conf:interface=${interface}:prefix=${prefix}/adv_autonomous":
@@ -50,7 +48,6 @@ define radvd::prefix(
 		$adv_router_addr_value = $adv_router_addr ? {
 			true    => 'on',
 			false   => 'off',
-			default => fail("Invalid value for adv_router_addr (got ${adv_router_addr}, expected true/false)")
 		}
 
 		bitfile::bit { "/etc/radvd.conf:interface=${interface}:prefix=${prefix}/adv_router_addr":
@@ -61,10 +58,6 @@ define radvd::prefix(
 	}
 
 	if $adv_valid_lifetime != undef {
-		if $adv_valid_lifetime !~ /^(\d+|infinity)$/ {
-			fail("Invalid value for adv_valid_lifetime (got ${adv_valid_lifetime}, expected integer or 'infinity')")
-		}
-
 		bitfile::bit { "/etc/radvd.conf:interface=${interface}:prefix=${prefix}/adv_valid_lifetime":
 			path    => "/etc/radvd.conf",
 			parent  => "/etc/radvd.conf:interface=${interface}:prefix=${prefix}",
@@ -73,10 +66,6 @@ define radvd::prefix(
 	}
 
 	if $adv_preferred_lifetime != undef {
-		if $adv_preferred_lifetime !~ /^(\d+|infinity)$/ {
-			fail("Invalid value for adv_preferred_lifetime (got ${adv_preferred_lifetime}, expected integer or 'infinity')")
-		}
-
 		bitfile::bit { "/etc/radvd.conf:interface=${interface}:prefix=${prefix}/adv_preferred_lifetime":
 			path    => "/etc/radvd.conf",
 			parent  => "/etc/radvd.conf:interface=${interface}:prefix=${prefix}",
@@ -88,7 +77,6 @@ define radvd::prefix(
 		$deprecate_prefix_value = $deprecate_prefix ? {
 			true    => 'on',
 			false   => 'off',
-			default => fail("Invalid value for deprecate_prefix (got ${deprecate_prefix}, expected true/false)")
 		}
 
 		bitfile::bit { "/etc/radvd.conf:interface=${interface}:prefix=${prefix}/deprecate_prefix":
@@ -102,7 +90,6 @@ define radvd::prefix(
 		$decrement_lifetimes_value = $decrement_lifetimes ? {
 			true    => 'on',
 			false   => 'off',
-			default => fail("Invalid value for decrement_lifetimes (got ${decrement_lifetimes}, expected true/false)")
 		}
 
 		bitfile::bit { "/etc/radvd.conf:interface=${interface}:prefix=${prefix}/decrement_lifetimes":
