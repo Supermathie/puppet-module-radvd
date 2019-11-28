@@ -10,7 +10,7 @@ class radvd {
 	bitfile { "/etc/radvd.conf":
 		owner  => "root",
 		group  => "root",
-		mode   => 0444,
+		mode   => '0444',
 		notify => Service["radvd"],
 	}
 
